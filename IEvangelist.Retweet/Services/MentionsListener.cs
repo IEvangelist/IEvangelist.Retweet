@@ -48,7 +48,7 @@ namespace IEvangelist.Retweet.Services
                     var mention = await _twitterClient.GetMostRecentMentionedTweetAsync();
                     if (mention != null && _lastMentionId != mention.Id)
                     {
-                        if (mention.UserMentions.Any(m => m.ScreenName == _twilioSettings.TwitterHandle))
+                        if (mention.Text.Contains(_twilioSettings.TwitterHandle, StringComparison.OrdinalIgnoreCase))
                         {
                             await UpdateLastMentionedIdAsync(_lastMentionId = mention.Id);
                             _ = await MessageResource.CreateAsync(
