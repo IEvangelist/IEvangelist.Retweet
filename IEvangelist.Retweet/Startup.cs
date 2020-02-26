@@ -20,7 +20,6 @@ namespace IEvangelist.Retweet
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.Configure<TwilioSettings>(
                         _configuration.GetSection(nameof(TwilioSettings)));
 

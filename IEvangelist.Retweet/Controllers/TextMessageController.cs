@@ -41,13 +41,15 @@ namespace IEvangelist.Retweet.Controllers
         }
 
         [HttpPost, Route("status")]
-        public IActionResult HandleSmsStatus([FromBody] TwilioStatus status)
+        public async Task<IActionResult> HandleSmsStatus([FromBody] TwilioStatus status)
         {
-            _tweetStatusCache.AddOrUpdate(status.MessageSid, (key, tweetText) =>
+            var tweetTwext = _tweetStatusCache.AddOrUpdate(status.MessageSid, (key, tweetText) =>
             {
                 tweetText.TextStatus = status.SmsStatus;
                 return tweetText;
             });
+
+            await _tweetStatusCache.PersistCacheAsync(tweetTwext);
 
             return Ok();
         }

@@ -1,13 +1,9 @@
-﻿using IEvangelist.Retweet.Extensions;
-using IEvangelist.Retweet.Models;
+﻿using IEvangelist.Retweet.Models;
 using IEvangelist.Retweet.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Twilio;
@@ -41,7 +37,9 @@ namespace IEvangelist.Retweet.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var lastId = await InitializeCacheAsync();
+            var lastMention = await _tweetStatusCache.InitializeCacheAsync();
+            var lastId = lastMention?.TweetId ?? 0;
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -60,7 +58,7 @@ namespace IEvangelist.Retweet.Services
                                 to: new PhoneNumber(_twilioSettings.ToPhoneNumber),
                                 statusCallback: new Uri("https://twilio-retweet.azurewebsites.net/api/twitter/status"));
 
-                            await UpdateCacheAsync((mention.Id, message.Sid, mention.CreatedAt));
+                            await _tweetStatusCache.PersistCacheAsync((mention.Id, message.Sid, mention.CreatedAt));
                         }
                     }
                 }
@@ -76,70 +74,5 @@ namespace IEvangelist.Retweet.Services
                 }
             }
         }
-
-        async ValueTask<long> InitializeCacheAsync()
-        {
-            var filePath = GetLastMentionFilePath();
-            if (!File.Exists(filePath))
-            {
-                return 0;
-            }
-
-            var json = await File.ReadAllTextAsync(filePath);
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return 0;
-            }
-
-            try
-            {
-                var tweetTexts = json.FromJson<TweetText[]>();
-                if (tweetTexts != null)
-                {
-                    for (var i = 0; i < tweetTexts.Length; ++i)
-                    {
-                        var text = tweetTexts[i];
-                        _tweetStatusCache.Set(text.TwilioId, text);
-                    }
-
-                    return tweetTexts.Where(t => t.WasTexted).OrderByDescending(t => t.CreatedAt).First().TweetId;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-            }
-
-            return 0;
-        }
-
-        async Task UpdateCacheAsync(TweetText text)
-        {
-            try
-            {
-                _tweetStatusCache.Set(text.TwilioId, text);
-
-                var keys = _tweetStatusCache.AllKeys;
-                var list = new List<TweetText>();
-                foreach (var key in keys)
-                {
-                    list.Add(_tweetStatusCache.GetOrCreate(key, _ => null));
-                }
-
-                var json = list.ToArray().ToJson();
-                var filePath = GetLastMentionFilePath();
-                await File.WriteAllTextAsync(filePath, json);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-            }
-        }
-
-        static string GetLastMentionFilePath() =>
-            Path.Combine(
-                Environment.GetFolderPath(
-                    Environment.SpecialFolder.LocalApplicationData),
-                "recent-twitter-mentions.json");
     }
 }
