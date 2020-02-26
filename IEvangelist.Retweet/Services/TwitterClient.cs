@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Tweetinvi;
@@ -9,7 +10,10 @@ namespace IEvangelist.Retweet.Services
 {
     public class TwitterClient : ITwitterClient
     {
+        readonly ILogger<TwitterClient> _logger;
         long? _lastMentionId = null;
+
+        public TwitterClient(ILogger<TwitterClient> logger) => _logger = logger;
 
         async Task<IMention> ITwitterClient.GetMostRecentMentionedTweetAsync()
         {
@@ -33,7 +37,7 @@ namespace IEvangelist.Retweet.Services
                 mentions?.OrderByDescending(mention => mention.CreatedAt)
                         .FirstOrDefault();
 
-            
+
             if (mostRecentMention != null)
             {
                 _lastMentionId = mostRecentMention.Id;
@@ -42,7 +46,17 @@ namespace IEvangelist.Retweet.Services
             return mostRecentMention;
         }
 
-        Task<ITweet> ITwitterClient.RetweetMostRecentMentionAsync() =>
-            Task.Run(() => Tweet.PublishRetweet(_lastMentionId.Value));
+        Task<ITweet> ITwitterClient.RetweetMostRecentMentionAsync()
+        {
+            try
+            {
+                return Task.Run(() => Tweet.PublishRetweet(_lastMentionId.Value));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return Task.FromResult<ITweet>(null);
+            }
+        }
     }
 }

@@ -1,3 +1,4 @@
+﻿using IEvangelist.Retweet.Models;
 using IEvangelist.Retweet.Options;
 using IEvangelist.Retweet.Services;
 using Microsoft.AspNetCore.Builder;
@@ -29,9 +30,10 @@ namespace IEvangelist.Retweet
                 _configuration["Authentication:Twitter:AccessToken"],
                 _configuration["Authentication:Twitter:AccessTokenSecret"]);
 
+            services.AddSingleton<ITweetStatusCache<TweetText>, TweetStatusCache>();
             services.AddSingleton<ITwitterClient, TwitterClient>();
             services.AddHostedService<MentionsListener>();
-
+            services.AddMemoryCache();
             services.AddControllers();
             services.AddSwaggerGen(
                 config => config.SwaggerDoc(
