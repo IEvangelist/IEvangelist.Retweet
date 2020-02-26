@@ -102,7 +102,7 @@ namespace IEvangelist.Retweet.Services
                         _tweetStatusCache.Set(text.TwilioId, text);
                     }
 
-                    return tweetTexts.OrderByDescending(t => t.CreatedAt).First().TweetId;
+                    return tweetTexts.Where(t => t.WasTexted).OrderByDescending(t => t.CreatedAt).First().TweetId;
                 }
             }
             catch (Exception ex)

@@ -12,6 +12,10 @@ namespace IEvangelist.Retweet.Models
 
         public DateTime CreatedAt { get; set; }
 
+        public bool WasTexted
+            => string.Equals(TextStatus, "sent", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(TextStatus, "delivered", StringComparison.OrdinalIgnoreCase);
+
         public static implicit operator TweetText((long tweetId, string twilioId, DateTime createdAt) tuple) =>
             new TweetText
             {
