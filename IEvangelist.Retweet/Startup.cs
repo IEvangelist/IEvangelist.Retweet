@@ -29,6 +29,7 @@ namespace IEvangelist.Retweet
                 _configuration["Authentication:Twitter:AccessToken"],
                 _configuration["Authentication:Twitter:AccessTokenSecret"]);
 
+            services.AddApplicationInsightsTelemetry();
             services.AddSingleton<ITweetStatusCache<TweetText>, TweetStatusCache>();
             services.AddSingleton<ITwitterClient, TwitterClient>();
             services.AddHostedService<MentionsListener>();

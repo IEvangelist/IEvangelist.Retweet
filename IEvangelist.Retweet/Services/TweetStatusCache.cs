@@ -12,7 +12,7 @@ namespace IEvangelist.Retweet.Services
 {
     public class TweetStatusCache : ITweetStatusCache<TweetText>
     {
-        static string LastMentionFilePath => "../recent-twitter-mentions.json";
+        static string LastMentionFilePath => "../../data/recent-twitter-mentions.json";
 
         readonly object _locker = new object();
         readonly ConcurrentDictionary<string, TweetText> _cache = new ConcurrentDictionary<string, TweetText>();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace IEvangelist.Retweet.Models
 {
@@ -12,7 +13,7 @@ namespace IEvangelist.Retweet.Models
 
         public DateTime CreatedAt { get; set; }
 
-        public bool WasTexted
+        [JsonIgnore] internal bool WasTexted
             => string.Equals(TextStatus, "sent", StringComparison.OrdinalIgnoreCase)
             || string.Equals(TextStatus, "delivered", StringComparison.OrdinalIgnoreCase);
 
