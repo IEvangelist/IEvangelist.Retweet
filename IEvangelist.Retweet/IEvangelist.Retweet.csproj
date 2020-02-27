@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
-    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="TweetinviAPI" Version="4.0.3" />
     <PackageReference Include="Twilio" Version="5.37.5" />
     <PackageReference Include="Twilio.AspNet.Common" Version="5.33.1" />
