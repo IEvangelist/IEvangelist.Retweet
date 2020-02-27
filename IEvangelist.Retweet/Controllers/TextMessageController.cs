@@ -1,7 +1,7 @@
-﻿using IEvangelist.Retweet.Services;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using IEvangelist.Retweet.Services;
+using Microsoft.AspNetCore.Mvc;
 using Twilio.AspNet.Core;
 using Twilio.TwiML;
 
@@ -16,7 +16,7 @@ namespace IEvangelist.Retweet.Controllers
             => _twitterClient = twitterClient;
 
         [HttpPost, Route("retweet")]
-        public async Task<IActionResult> HandleTwilioWebhook()
+        public async ValueTask<IActionResult> HandleTwilioWebhook()
         {
             var requestBody = Request.Form["Body"];
 

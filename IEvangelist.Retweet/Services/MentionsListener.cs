@@ -1,10 +1,10 @@
-﻿using IEvangelist.Retweet.Options;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using IEvangelist.Retweet.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
