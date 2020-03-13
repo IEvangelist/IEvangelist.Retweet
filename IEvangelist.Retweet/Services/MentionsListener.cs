@@ -14,21 +14,21 @@ namespace IEvangelist.Retweet.Services
     public class MentionsListener : BackgroundService
     {
         readonly ILogger<MentionsListener> _logger;
-        readonly TwilioSettings _twilioSettings;
+        readonly Settings _settings;
         readonly ITwitterClient _twitterClient;
 
         public MentionsListener(
             ILogger<MentionsListener> logger,
-            IOptions<TwilioSettings> options,
+            IOptions<Settings> options,
             ITwitterClient twitterClient)
         {
             _logger = logger;
-            _twilioSettings = options.Value;
+            _settings = options.Value;
             _twitterClient = twitterClient;
 
             TwilioClient.Init(
-                _twilioSettings.AccountSid,
-                _twilioSettings.AuthToken);
+                _settings.TwilioAccountSid,
+                _settings.TwilioAuthToken);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -44,12 +44,12 @@ namespace IEvangelist.Retweet.Services
                     if (mention != null && lastId != mention.Id)
                     {
                         if (mention.FullText
-                                   .Contains(_twilioSettings.TwitterHandle, StringComparison.OrdinalIgnoreCase))
+                                   .Contains(_settings.TwitterHandle, StringComparison.OrdinalIgnoreCase))
                         {
                             _ = await MessageResource.CreateAsync(
                                 body: $"{mention.Url}. Someone mentioned you on Twitter! Reply with 'Yes' to retweet this...",
-                                from: new PhoneNumber(_twilioSettings.FromPhoneNumber),
-                                to: new PhoneNumber(_twilioSettings.ToPhoneNumber));
+                                from: new PhoneNumber(_settings.TwilioFromPhoneNumber),
+                                to: new PhoneNumber(_settings.ToPhoneNumber));
 
                             lastId = mention.Id;
                         }
@@ -62,7 +62,7 @@ namespace IEvangelist.Retweet.Services
                 finally
                 {
                     await Task.Delay(
-                        _twilioSettings.DelayBetweenMentionCalls,
+                        _settings.DelayBetweenMentionCalls,
                         stoppingToken);
                 }
             }

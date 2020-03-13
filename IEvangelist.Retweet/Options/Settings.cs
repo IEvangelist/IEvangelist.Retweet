@@ -1,24 +1,24 @@
-namespace IEvangelist.Retweet.Options
+﻿namespace IEvangelist.Retweet.Options
 {
-    public class TwilioSettings
+    public class Settings
     {
         /// <summary>
         /// The primary Twilio account SID, displayed prominently on your twilio.com/console dashboard.
         /// </summary>
-        public string AccountSid { get; set; }
+        public string TwilioAccountSid { get; set; }
         
         /// <summary>
         /// The auth token for your primary Twilio account, hidden on your twilio.com/console dashboard.
         /// </summary>
-        public string AuthToken { get; set; }
+        public string TwilioAuthToken { get; set; }
 
         /// <summary>
-        /// The Twilio phone number that to text from.
+        /// The Twilio phone number to text from (in the following format: +12345678900).
         /// </summary>
-        public string FromPhoneNumber { get; set; }
+        public string TwilioFromPhoneNumber { get; set; }
 
         /// <summary>
-        /// The user's phone number to send texts to.
+        /// The user's phone number to send texts to (in the following format: +12345678900).
         /// </summary>
         public string ToPhoneNumber { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using IEvangelist.Retweet.Options;
+﻿using System;
+using IEvangelist.Retweet.Options;
 using IEvangelist.Retweet.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,8 +19,14 @@ namespace IEvangelist.Retweet
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<TwilioSettings>(
-                _configuration.GetSection(nameof(TwilioSettings)));
+            services.Configure<Settings>(settings =>
+            {
+                settings.TwilioAccountSid = _configuration["TWILIO_ACCOUNT_SID"];
+                settings.TwilioAuthToken = _configuration["TWILIO_AUTH_TOKEN"];
+                settings.TwilioFromPhoneNumber = _configuration["TWILIO_SMS_PHONE_NUMBER"];
+                settings.ToPhoneNumber = _configuration["TO_PHONE_NUMBER"];
+                settings.TwitterHandle = _configuration["TWITTER_HANDLE"];
+            });
 
             Auth.SetUserCredentials(
                 _configuration["Authentication:Twitter:ConsumerKey"],
